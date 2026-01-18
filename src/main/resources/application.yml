@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: task-project
+
+  datasource:
+    url: jdbc:postgresql://localhost:${DB_PORT:5444}/taskprojectdb
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET}
+      expiration: ${JWT_EXPIRATION:86400000}
