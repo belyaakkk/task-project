@@ -5,7 +5,10 @@ import lombok.Builder;
 import java.util.UUID;
 
 @Builder
-public record CreateCategoryResponse(
+public record TeamSummaryResponse(
         UUID id,
-        String name) {
+        String name,
+        boolean isOwner,
+        int memberCount
+) {
 }

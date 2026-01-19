@@ -4,7 +4,7 @@ import com.belyak.taskproject.domain.model.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -32,4 +32,11 @@ public class UserEntity extends BaseEntity {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    private List<TeamEntity> ownedTeams = new ArrayList<>();
+
+    @Builder.Default
+    @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
+    private Set<TeamEntity> joinedTeams = new HashSet<>();
 }

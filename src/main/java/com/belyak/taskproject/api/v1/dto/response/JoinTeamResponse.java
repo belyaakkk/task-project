@@ -5,7 +5,8 @@ import lombok.Builder;
 import java.util.UUID;
 
 @Builder
-public record CreateCategoryResponse(
-        UUID id,
-        String name) {
+public record JoinTeamResponse(
+        UUID teamId,
+        String name
+) {
 }

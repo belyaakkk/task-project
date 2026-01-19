@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,6 +26,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean existsByEmail(String email) {
         return springDataUserRepository.existsByEmail(email);
+    }
+
+    @Override
+    public Optional<User> findById(UUID userId) {
+        return springDataUserRepository.findById(userId).map(userPersistenceMapper::toDomain);
     }
 
     @Override
