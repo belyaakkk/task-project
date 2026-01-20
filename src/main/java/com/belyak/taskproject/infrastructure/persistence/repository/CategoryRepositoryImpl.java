@@ -5,6 +5,7 @@ import com.belyak.taskproject.domain.model.CategorySummary;
 import com.belyak.taskproject.domain.model.TaskStatus;
 import com.belyak.taskproject.domain.repository.CategoryRepository;
 import com.belyak.taskproject.infrastructure.persistence.entity.CategoryEntity;
+import com.belyak.taskproject.infrastructure.persistence.entity.TeamEntity;
 import com.belyak.taskproject.infrastructure.persistence.mapper.CategoryPersistenceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -18,25 +19,33 @@ import java.util.UUID;
 public class CategoryRepositoryImpl implements CategoryRepository {
 
     private final SpringDataCategoryRepository springDataCategoryRepository;
+    private final SpringDataTeamRepository springDataTeamRepository;
     private final CategoryPersistenceMapper categoryPersistenceMapper;
 
     @Override
-    public List<CategorySummary> findAllSummaries(TaskStatus status) {
-        return springDataCategoryRepository.findCategoriesWithTaskCount(status).stream()
+    public List<CategorySummary> findAllByTeamId(UUID teamId, TaskStatus status) {
+        return springDataCategoryRepository.findCategoriesByTeamIdAndStatus(teamId, status).stream()
                 .map(categoryPersistenceMapper::toSummary)
                 .toList();
     }
 
     @Override
-    public Category save(Category category) {
-        CategoryEntity categoryToSave = categoryPersistenceMapper.toEntity(category);
-        CategoryEntity savedCategory = springDataCategoryRepository.save(categoryToSave);
-        return categoryPersistenceMapper.toDomain(savedCategory);
+    public Category createCategory(UUID teamId, String name) {
+        TeamEntity teamProxy = springDataTeamRepository.getReferenceById(teamId);
+
+        CategoryEntity categoryEntity = CategoryEntity.builder()
+                .name(name)
+                .team(teamProxy)
+                .build();
+
+        CategoryEntity savedEntity = springDataCategoryRepository.save(categoryEntity);
+
+        return categoryPersistenceMapper.toDomain(savedEntity);
     }
 
     @Override
-    public boolean existsByNameIgnoreCase(String name) {
-        return springDataCategoryRepository.existsByNameIgnoreCase(name);
+    public boolean existsByName(UUID teamId, String name) {
+        return springDataCategoryRepository.existsByTeamIdAndNameIgnoreCase(teamId, name);
     }
 
     @Override
@@ -58,5 +67,10 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public boolean existsById(UUID categoryId) {
         return springDataCategoryRepository.existsById(categoryId);
+    }
+
+    @Override
+    public boolean canAccess(UUID categoryId, UUID userId) {
+        return springDataCategoryRepository.canAccess(categoryId, userId);
     }
 }

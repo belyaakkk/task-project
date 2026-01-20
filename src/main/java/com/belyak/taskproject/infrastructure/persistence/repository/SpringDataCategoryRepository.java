@@ -18,8 +18,11 @@ public interface SpringDataCategoryRepository extends JpaRepository<CategoryEnti
     @Query("SELECT c.id as id, c.name as name, COUNT(t) as taskCount " +
            "FROM CategoryEntity c " +
            "LEFT JOIN c.tasks t ON t.status = :status " +
+           "WHERE c.team.id = :teamId " +
            "GROUP BY c.id, c.name")
-    List<CategorySummaryProjection> findCategoriesWithTaskCount(@Param("status") TaskStatus status);
+    List<CategorySummaryProjection> findCategoriesByTeamIdAndStatus(
+            @Param("teamId") UUID teamId,
+            @Param("status") TaskStatus status);
 
     @Query("SELECT c.id as id, c.name as name, COUNT(t) as taskCount " +
            "FROM CategoryEntity c " +
@@ -28,5 +31,12 @@ public interface SpringDataCategoryRepository extends JpaRepository<CategoryEnti
            "GROUP BY c.id, c.name")
     Optional<CategorySummaryProjection> findCategoryWithTaskCountById(UUID id, @Param("status") TaskStatus status);
 
-    boolean existsByNameIgnoreCase(String name);
+    @Query("SELECT COUNT(c) > 0 " +
+           "FROM CategoryEntity c " +
+           "JOIN c.team team " +
+           "JOIN team.members member " +
+           "WHERE c.id = :categoryId and member.id = :userId")
+    boolean canAccess(@Param("categoryId") UUID categoryId, @Param("userId") UUID userId);
+
+    boolean existsByTeamIdAndNameIgnoreCase(UUID teamId, String name);
 }

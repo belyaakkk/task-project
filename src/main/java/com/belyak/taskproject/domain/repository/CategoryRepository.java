@@ -10,11 +10,11 @@ import java.util.UUID;
 
 public interface CategoryRepository {
 
-    List<CategorySummary> findAllSummaries(TaskStatus status);
+    List<CategorySummary> findAllByTeamId(UUID teamId, TaskStatus status);
 
-    Category save(Category category);
+    Category createCategory(UUID teamId, String name);
 
-    boolean existsByNameIgnoreCase(String name);
+    boolean existsByName(UUID teamId, String name);
 
     Optional<Category> findById(UUID categoryId);
 
@@ -23,4 +23,6 @@ public interface CategoryRepository {
     void deleteById(UUID categoryId);
 
     boolean existsById(UUID categoryId);
+
+    boolean canAccess(UUID categoryId, UUID userId);
 }

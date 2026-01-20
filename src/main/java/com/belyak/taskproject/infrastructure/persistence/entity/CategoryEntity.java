@@ -13,7 +13,9 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "categories")
+@Table(name = "categories", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"teamId", "name"})
+})
 public class CategoryEntity extends BaseEntity {
 
     @Id
@@ -22,6 +24,10 @@ public class CategoryEntity extends BaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id", nullable = false)
+    private TeamEntity team;
 
     @Builder.Default
     @OneToMany(mappedBy = "category")

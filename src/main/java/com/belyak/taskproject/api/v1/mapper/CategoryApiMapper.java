@@ -1,6 +1,5 @@
 package com.belyak.taskproject.api.v1.mapper;
 
-import com.belyak.taskproject.api.v1.dto.request.CreateCategoryRequest;
 import com.belyak.taskproject.api.v1.dto.response.CategoryResponse;
 import com.belyak.taskproject.api.v1.dto.response.CreateCategoryResponse;
 import com.belyak.taskproject.domain.model.Category;
@@ -16,6 +15,4 @@ public interface CategoryApiMapper {
     List<CategoryResponse> toResponseList(List<CategorySummary> summaries);
 
     CreateCategoryResponse toCreateResponse(Category category);
-
-    Category toDomain(CreateCategoryRequest request);
 }

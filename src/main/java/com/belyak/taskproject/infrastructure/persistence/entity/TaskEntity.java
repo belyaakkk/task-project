@@ -31,6 +31,7 @@ public class TaskEntity extends BaseEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity category;
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "task_tags",

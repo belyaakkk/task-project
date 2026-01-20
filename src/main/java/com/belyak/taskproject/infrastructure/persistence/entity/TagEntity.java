@@ -23,6 +23,13 @@ public class TagEntity extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "color")
+    private String color;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id", nullable = false)
+    private TeamEntity team;
+
     @Builder.Default
     @ManyToMany(mappedBy = "tags")
     private Set<TaskEntity> tasks = new HashSet<>();

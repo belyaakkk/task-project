@@ -62,4 +62,24 @@ public class TeamRepositoryImpl implements TeamRepository {
         }
         springDataTeamRepository.addMemberNative(teamId, userId);
     }
+
+    @Override
+    public boolean isMember(UUID teamId, UUID userId) {
+        return springDataTeamRepository.isMember(teamId, userId);
+    }
+
+    @Override
+    public boolean isOwner(UUID teamId, UUID userId) {
+        return springDataTeamRepository.isOwner(teamId, userId);
+    }
+
+    @Override
+    public Optional<Team> findById(UUID teamId) {
+        return springDataTeamRepository.findById(teamId).map(teamPersistenceMapper::toDomain);
+    }
+
+    @Override
+    public boolean existsById(UUID teamId) {
+        return springDataTeamRepository.existsById(teamId);
+    }
 }

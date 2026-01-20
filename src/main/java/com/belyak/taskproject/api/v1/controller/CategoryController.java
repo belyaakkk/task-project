@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,32 +19,40 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/v1/categories")
+@RequestMapping(path = "/api/v1")
 public class CategoryController {
 
     private final CategoryService categoryService;
     private final CategoryApiMapper categoryApiMapper;
 
-    @GetMapping
-    public ResponseEntity<List<CategoryResponse>> getAllCategories() {
-        List<CategorySummary> allSummaries = categoryService.getAllCategories();
+    @GetMapping(path = "/teams/{teamId}/categories")
+    @PreAuthorize("@teamSecurity.isMember(#teamId, principal.id)")
+    public ResponseEntity<List<CategoryResponse>> getAllCategories(
+            @PathVariable UUID teamId) {
+        List<CategorySummary> allSummaries = categoryService.findTeamCategories(teamId);
+
         return ResponseEntity
                 .ok(categoryApiMapper.toResponseList(allSummaries));
     }
 
-    @PostMapping
+    @PostMapping(path = "/teams/{teamId}/categories")
+    @PreAuthorize("@teamSecurity.isMember(#teamId, principal.id)")
     public ResponseEntity<CreateCategoryResponse> createCategory(
-            @Valid @RequestBody CreateCategoryRequest createCategoryRequest) {
-        Category categoryToSave = categoryApiMapper.toDomain(createCategoryRequest);
-        Category savedCategory = categoryService.createCategory(categoryToSave);
+            @PathVariable UUID teamId,
+            @RequestBody @Valid CreateCategoryRequest request) {
+        Category savedCategory = categoryService.createCategory(teamId, request.name());
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(categoryApiMapper.toCreateResponse(savedCategory));
     }
 
-    @DeleteMapping(path = "/{categoryId}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable UUID categoryId) {
+    @DeleteMapping(path = "/categories/{categoryId}")
+    @PreAuthorize("@categorySecurity.hasAccess(#categoryId, principal.id)")
+    public ResponseEntity<Void> deleteCategory(
+            @PathVariable UUID categoryId) {
         categoryService.deleteCategory(categoryId);
+
         return ResponseEntity
                 .noContent()
                 .build();

@@ -1,0 +1,22 @@
+package com.belyak.taskproject.infrastructure.policy;
+
+import com.belyak.taskproject.domain.exception.CategoryDeletionException;
+import com.belyak.taskproject.domain.repository.TaskRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+
+@Component
+@RequiredArgsConstructor
+public class CategoryHasNoTasksRule implements CategoryDeletionRule {
+
+    private final TaskRepository taskRepository;
+
+    @Override
+    public void validate(UUID categoryId) {
+        if (taskRepository.existsByCategoryId(categoryId)) {
+            throw new CategoryDeletionException("Category cannot be deleted because it has tasks");
+        }
+    }
+}

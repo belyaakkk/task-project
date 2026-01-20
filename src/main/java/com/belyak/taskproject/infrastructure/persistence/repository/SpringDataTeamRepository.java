@@ -31,4 +31,10 @@ public interface SpringDataTeamRepository extends JpaRepository<TeamEntity, UUID
     @Modifying
     @Query(value = "INSERT INTO team_members (team_id, user_id) VALUES (:teamId, :userId)", nativeQuery = true)
     void addMemberNative(@Param("teamId") UUID teamId, @Param("userId") UUID userId);
+
+    @Query("SELECT COUNT(t) > 0 FROM TeamEntity t JOIN t.members m WHERE t.id = :teamId AND m.id = :userId")
+    boolean isMember(UUID teamId, UUID userId);
+
+    @Query("SELECT COUNT(t) > 0 FROM TeamEntity t WHERE t.id = :teamId AND t.owner.id = :userId")
+    boolean isOwner(@Param("teamId") UUID teamId, @Param("userId") UUID userId);
 }

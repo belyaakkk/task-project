@@ -8,6 +8,7 @@ import com.belyak.taskproject.infrastructure.persistence.projections.TeamSummary
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TeamPersistenceMapper {
     @Mapping(source = "owner", target = "isOwner")
     TeamSummary toSummary(TeamSummaryProjection teamSummaryProjection);
@@ -30,11 +31,7 @@ public interface TeamPersistenceMapper {
 
     @Named("mapMembersToIds")
     default Set<UUID> mapMembersToIds(Set<UserEntity> members) {
-        if (members == null) {
-            return Collections.emptySet();
-        }
-        return members.stream()
-                .map(UserEntity::getId)
-                .collect(Collectors.toSet());
+        if (members == null) return Collections.emptySet();
+        return members.stream().map(UserEntity::getId).collect(Collectors.toSet());
     }
 }

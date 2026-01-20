@@ -56,6 +56,7 @@ public class TeamController {
                 .body(teamApiMapper.toCreateResponse(createdTeam));
     }
 
+
     @Operation(
             summary = "Join a team",
             description = "Adds the authenticated user to the team using a join code and password.")
