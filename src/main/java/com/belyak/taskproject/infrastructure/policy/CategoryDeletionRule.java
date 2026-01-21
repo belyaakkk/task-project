@@ -1,7 +1,7 @@
 package com.belyak.taskproject.infrastructure.policy;
 
-import java.util.UUID;
+import com.belyak.taskproject.domain.model.Category;
 
 public interface CategoryDeletionRule {
-    void validate(UUID categoryId);
+    void validate(Category category);
 }

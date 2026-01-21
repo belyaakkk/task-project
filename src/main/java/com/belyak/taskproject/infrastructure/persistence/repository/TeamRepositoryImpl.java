@@ -69,11 +69,6 @@ public class TeamRepositoryImpl implements TeamRepository {
     }
 
     @Override
-    public boolean isOwner(UUID teamId, UUID userId) {
-        return springDataTeamRepository.isOwner(teamId, userId);
-    }
-
-    @Override
     public Optional<Team> findById(UUID teamId) {
         return springDataTeamRepository.findById(teamId).map(teamPersistenceMapper::toDomain);
     }

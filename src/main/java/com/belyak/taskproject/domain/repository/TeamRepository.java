@@ -20,8 +20,6 @@ public interface TeamRepository {
 
     boolean isMember(UUID teamId, UUID userId);
 
-    boolean isOwner(UUID teamId, UUID userId);
-
     Optional<Team> findById(UUID teamId);
 
     boolean existsById(UUID teamId);

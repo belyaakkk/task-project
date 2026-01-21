@@ -18,8 +18,6 @@ public interface CategoryRepository {
 
     Optional<Category> findById(UUID categoryId);
 
-    Optional<CategorySummary> findSummaryById(UUID categoryId, TaskStatus status);
-
     void deleteById(UUID categoryId);
 
     boolean existsById(UUID categoryId);

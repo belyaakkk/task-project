@@ -54,12 +54,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     @Override
-    public Optional<CategorySummary> findSummaryById(UUID categoryId, TaskStatus status) {
-        return springDataCategoryRepository.findCategoryWithTaskCountById(categoryId, status)
-                .map(categoryPersistenceMapper::toSummary);
-    }
-
-    @Override
     public void deleteById(UUID categoryId) {
         springDataCategoryRepository.deleteById(categoryId);
     }

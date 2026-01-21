@@ -9,8 +9,8 @@ import java.util.UUID;
 @Builder
 @Getter
 @AllArgsConstructor
-public class Category {
+public class Tag {
     private final UUID id;
     private String name;
-    private boolean isSystem;
+    private String color;
 }

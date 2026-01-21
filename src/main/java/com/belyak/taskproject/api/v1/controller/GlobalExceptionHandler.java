@@ -3,6 +3,8 @@ package com.belyak.taskproject.api.v1.controller;
 import com.belyak.taskproject.api.v1.dto.ApiErrorResponse;
 import com.belyak.taskproject.domain.exception.CategoryAlreadyExistsException;
 import com.belyak.taskproject.domain.exception.CategoryDeletionException;
+import com.belyak.taskproject.domain.exception.TagAlreadyExistsException;
+import com.belyak.taskproject.domain.exception.TagDeletionException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -46,10 +48,22 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.CONFLICT, "Category with this name already exists", List.of());
     }
 
+    @ExceptionHandler(TagAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleTagAlreadyExistsException(TagAlreadyExistsException ex) {
+        log.warn("Tag conflict: {}", ex.getMessage());
+        return buildResponse(HttpStatus.CONFLICT, "Tag with this name already exists", List.of());
+    }
+
     @ExceptionHandler(CategoryDeletionException.class)
     public ResponseEntity<ApiErrorResponse> handleCategoryDeletionException(CategoryDeletionException ex) {
         log.warn("Category deletion blocked: {}", ex.getMessage());
         return buildResponse(HttpStatus.CONFLICT, "Category deletion blocked. It has tasks", List.of());
+    }
+
+    @ExceptionHandler(TagDeletionException.class)
+    public ResponseEntity<ApiErrorResponse> handleTagDeletionException(TagDeletionException ex) {
+        log.warn("Tag deletion blocked: {}", ex.getMessage());
+        return buildResponse(HttpStatus.CONFLICT, "Tag deletion blocked. It has tasks", List.of());
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -61,6 +75,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         log.error("Database conflict: {}", ex.getMessage());
         return buildResponse(HttpStatus.CONFLICT, "Resource already exists", List.of());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("Tag duplication: {}", ex.getMessage());
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), List.of());
     }
 
     @ExceptionHandler(IllegalStateException.class)

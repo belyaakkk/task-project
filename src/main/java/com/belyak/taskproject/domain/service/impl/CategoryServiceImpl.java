@@ -41,13 +41,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(UUID categoryId) {
-        if (!categoryRepository.existsById(categoryId)) {
-            throw new EntityNotFoundException("Category with id '%s' not found".formatted(categoryId));
-        }
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("Category with id '%s' not found".formatted(categoryId)));
 
-        deletionRules.forEach(rule -> {
-            rule.validate(categoryId);
-        });
+        deletionRules.forEach(rule -> rule.validate(category));
 
         categoryRepository.deleteById(categoryId);
     }

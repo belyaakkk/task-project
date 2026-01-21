@@ -25,6 +25,10 @@ public class CategoryEntity extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Builder.Default
+    @Column(name = "is_system", nullable = false)
+    private boolean isSystem = true;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = false)
     private TeamEntity team;

@@ -16,4 +16,9 @@ public class TaskRepositoryImpl implements TaskRepository {
     public boolean existsByCategoryId(UUID categoryId) {
         return springDataPostRepository.existsByCategoryId(categoryId);
     }
+
+    @Override
+    public boolean existsByTagId(UUID tagId) {
+        return springDataPostRepository.existsByTagsId(tagId);
+    }
 }
