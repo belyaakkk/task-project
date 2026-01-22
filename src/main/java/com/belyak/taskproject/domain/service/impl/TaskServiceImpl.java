@@ -19,12 +19,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean existsByCategoryId(UUID categoryId) {
-        return taskRepository.existsByCategoryId(categoryId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<TaskSummary> findTeamTasks(UUID teamId, TaskStatus taskStatus) {
         return taskRepository.findAllByTeamIdAndStatus(teamId, taskStatus);
     }
