@@ -2,7 +2,7 @@ package com.belyak.taskproject.domain.service.impl;
 
 import com.belyak.taskproject.domain.exception.CategoryAlreadyExistsException;
 import com.belyak.taskproject.domain.model.Category;
-import com.belyak.taskproject.domain.model.CategorySummary;
+import com.belyak.taskproject.domain.model.CategorySummaryWithTaskCount;
 import com.belyak.taskproject.domain.model.TaskStatus;
 import com.belyak.taskproject.domain.repository.CategoryRepository;
 import com.belyak.taskproject.domain.service.CategoryService;
@@ -24,8 +24,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CategorySummary> findTeamCategories(UUID teamId) {
-        return categoryRepository.findAllByTeamId(teamId, TaskStatus.PUBLISHED);
+    public List<CategorySummaryWithTaskCount> findTeamCategories(UUID teamId) {
+        return categoryRepository.findAllByTeamId(teamId, TaskStatus.IN_PROGRESS);
     }
 
     @Override
@@ -47,12 +47,5 @@ public class CategoryServiceImpl implements CategoryService {
         deletionRules.forEach(rule -> rule.validate(category));
 
         categoryRepository.deleteById(categoryId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Category findCategoryById(UUID categoryId) {
-        return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
     }
 }

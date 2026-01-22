@@ -4,7 +4,7 @@ import com.belyak.taskproject.api.v1.dto.request.CreateTagsRequest;
 import com.belyak.taskproject.domain.exception.TagAlreadyExistsException;
 import com.belyak.taskproject.domain.model.Tag;
 import com.belyak.taskproject.domain.model.TagConstants;
-import com.belyak.taskproject.domain.model.TagSummary;
+import com.belyak.taskproject.domain.model.TagSummaryWithTaskCount;
 import com.belyak.taskproject.domain.model.TaskStatus;
 import com.belyak.taskproject.domain.repository.TagRepository;
 import com.belyak.taskproject.domain.repository.TeamRepository;
@@ -31,8 +31,8 @@ public class TagServiceImpl implements TagService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TagSummary> findTeamTags(UUID teamId) {
-        return tagRepository.findAllByTeamId(teamId, TaskStatus.PUBLISHED);
+    public List<TagSummaryWithTaskCount> findTeamTags(UUID teamId) {
+        return tagRepository.findAllByTeamId(teamId, TaskStatus.IN_PROGRESS);
     }
 
     @Override

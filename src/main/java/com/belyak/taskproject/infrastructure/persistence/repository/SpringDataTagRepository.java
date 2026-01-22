@@ -2,7 +2,7 @@ package com.belyak.taskproject.infrastructure.persistence.repository;
 
 import com.belyak.taskproject.domain.model.TaskStatus;
 import com.belyak.taskproject.infrastructure.persistence.entity.TagEntity;
-import com.belyak.taskproject.infrastructure.persistence.projections.TagSummaryProjection;
+import com.belyak.taskproject.infrastructure.persistence.projections.TagInfoWithTaskCountProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,7 +20,7 @@ public interface SpringDataTagRepository extends JpaRepository<TagEntity, UUID> 
            "LEFT JOIN t.tasks task on task.status = :status " +
            "WHERE t.team.id = :teamId " +
            "GROUP BY t.id, t.name, t.color")
-    List<TagSummaryProjection> findTagsByTeamIdAndStatus(
+    List<TagInfoWithTaskCountProjection> findTagsByTeamIdAndStatus(
             @Param("teamId") UUID teamId,
             @Param("status") TaskStatus status);
 

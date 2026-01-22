@@ -5,7 +5,7 @@ import com.belyak.taskproject.api.v1.dto.response.CreateTagResponse;
 import com.belyak.taskproject.api.v1.dto.response.TagResponse;
 import com.belyak.taskproject.api.v1.mapper.TagApiMapper;
 import com.belyak.taskproject.domain.model.Tag;
-import com.belyak.taskproject.domain.model.TagSummary;
+import com.belyak.taskproject.domain.model.TagSummaryWithTaskCount;
 import com.belyak.taskproject.domain.service.TagService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,7 +41,7 @@ public class TagController {
     public ResponseEntity<List<TagResponse>> getAllTags(
             @Parameter(description = "ID of the team", required = true)
             @PathVariable UUID teamId) {
-        List<TagSummary> allSummaries = tagService.findTeamTags(teamId);
+        List<TagSummaryWithTaskCount> allSummaries = tagService.findTeamTags(teamId);
 
         return ResponseEntity
                 .ok(tagApiMapper.toResponseList(allSummaries));

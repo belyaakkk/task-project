@@ -39,4 +39,8 @@ public class UserEntity extends BaseEntity {
     @Builder.Default
     @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
     private Set<TeamEntity> joinedTeams = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "assignee", fetch = FetchType.LAZY)
+    private List<TaskEntity> tasks = new ArrayList<>();
 }

@@ -2,9 +2,7 @@ package com.belyak.taskproject.infrastructure.persistence.projections;
 
 import java.util.UUID;
 
-public interface TagSummaryProjection {
+public interface CategoryInfoProjection {
     UUID getId();
     String getName();
-    String getColor();
-    long getTaskCount();
 }

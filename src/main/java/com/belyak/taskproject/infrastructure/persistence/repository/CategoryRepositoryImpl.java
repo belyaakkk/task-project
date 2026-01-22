@@ -1,7 +1,7 @@
 package com.belyak.taskproject.infrastructure.persistence.repository;
 
 import com.belyak.taskproject.domain.model.Category;
-import com.belyak.taskproject.domain.model.CategorySummary;
+import com.belyak.taskproject.domain.model.CategorySummaryWithTaskCount;
 import com.belyak.taskproject.domain.model.TaskStatus;
 import com.belyak.taskproject.domain.repository.CategoryRepository;
 import com.belyak.taskproject.infrastructure.persistence.entity.CategoryEntity;
@@ -23,7 +23,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     private final CategoryPersistenceMapper categoryPersistenceMapper;
 
     @Override
-    public List<CategorySummary> findAllByTeamId(UUID teamId, TaskStatus status) {
+    public List<CategorySummaryWithTaskCount> findAllByTeamId(UUID teamId, TaskStatus status) {
         return springDataCategoryRepository.findCategoriesByTeamIdAndStatus(teamId, status).stream()
                 .map(categoryPersistenceMapper::toSummary)
                 .toList();
@@ -36,6 +36,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
         CategoryEntity categoryEntity = CategoryEntity.builder()
                 .name(name)
                 .team(teamProxy)
+                .isSystem(false)
                 .build();
 
         CategoryEntity savedEntity = springDataCategoryRepository.save(categoryEntity);
@@ -56,11 +57,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public void deleteById(UUID categoryId) {
         springDataCategoryRepository.deleteById(categoryId);
-    }
-
-    @Override
-    public boolean existsById(UUID categoryId) {
-        return springDataCategoryRepository.existsById(categoryId);
     }
 
     @Override

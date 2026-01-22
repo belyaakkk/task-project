@@ -1,7 +1,7 @@
 package com.belyak.taskproject.infrastructure.persistence.repository;
 
 import com.belyak.taskproject.domain.model.Tag;
-import com.belyak.taskproject.domain.model.TagSummary;
+import com.belyak.taskproject.domain.model.TagSummaryWithTaskCount;
 import com.belyak.taskproject.domain.model.TaskStatus;
 import com.belyak.taskproject.domain.repository.TagRepository;
 import com.belyak.taskproject.infrastructure.persistence.entity.TagEntity;
@@ -26,7 +26,7 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TagSummary> findAllByTeamId(UUID teamId, TaskStatus status) {
+    public List<TagSummaryWithTaskCount> findAllByTeamId(UUID teamId, TaskStatus status) {
         return springDataTagRepository.findTagsByTeamIdAndStatus(teamId, status).stream()
                 .map(tagPersistenceMapper::toSummary)
                 .toList();

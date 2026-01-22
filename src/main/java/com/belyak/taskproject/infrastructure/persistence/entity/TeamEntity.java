@@ -48,4 +48,10 @@ public class TeamEntity extends BaseEntity {
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "team")
     private Set<CategoryEntity> categories = new HashSet<>();
+
+    @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "team")
+    private Set<TaskEntity> tasks = new HashSet<>();
 }

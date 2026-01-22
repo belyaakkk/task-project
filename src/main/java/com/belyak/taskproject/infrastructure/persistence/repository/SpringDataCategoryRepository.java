@@ -2,14 +2,13 @@ package com.belyak.taskproject.infrastructure.persistence.repository;
 
 import com.belyak.taskproject.domain.model.TaskStatus;
 import com.belyak.taskproject.infrastructure.persistence.entity.CategoryEntity;
-import com.belyak.taskproject.infrastructure.persistence.projections.CategorySummaryProjection;
+import com.belyak.taskproject.infrastructure.persistence.projections.CategoryInfoWithTaskCountProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -20,16 +19,9 @@ public interface SpringDataCategoryRepository extends JpaRepository<CategoryEnti
            "LEFT JOIN c.tasks t ON t.status = :status " +
            "WHERE c.team.id = :teamId " +
            "GROUP BY c.id, c.name")
-    List<CategorySummaryProjection> findCategoriesByTeamIdAndStatus(
+    List<CategoryInfoWithTaskCountProjection> findCategoriesByTeamIdAndStatus(
             @Param("teamId") UUID teamId,
             @Param("status") TaskStatus status);
-
-    @Query("SELECT c.id as id, c.name as name, COUNT(t) as taskCount " +
-           "FROM CategoryEntity c " +
-           "LEFT JOIN c.tasks t ON t.status = :status " +
-           "WHERE c.id = :id " +
-           "GROUP BY c.id, c.name")
-    Optional<CategorySummaryProjection> findCategoryWithTaskCountById(UUID id, @Param("status") TaskStatus status);
 
     @Query("SELECT COUNT(c) > 0 " +
            "FROM CategoryEntity c " +

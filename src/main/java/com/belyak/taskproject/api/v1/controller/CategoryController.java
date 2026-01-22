@@ -5,7 +5,7 @@ import com.belyak.taskproject.api.v1.dto.response.CategoryResponse;
 import com.belyak.taskproject.api.v1.dto.response.CreateCategoryResponse;
 import com.belyak.taskproject.api.v1.mapper.CategoryApiMapper;
 import com.belyak.taskproject.domain.model.Category;
-import com.belyak.taskproject.domain.model.CategorySummary;
+import com.belyak.taskproject.domain.model.CategorySummaryWithTaskCount;
 import com.belyak.taskproject.domain.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,7 +40,7 @@ public class CategoryController {
     @PreAuthorize("@teamSecurity.isMember(#teamId, principal.id)")
     public ResponseEntity<List<CategoryResponse>> getAllCategories(
             @PathVariable UUID teamId) {
-        List<CategorySummary> allSummaries = categoryService.findTeamCategories(teamId);
+        List<CategorySummaryWithTaskCount> allSummaries = categoryService.findTeamCategories(teamId);
 
         return ResponseEntity
                 .ok(categoryApiMapper.toResponseList(allSummaries));

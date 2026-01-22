@@ -2,9 +2,9 @@ package com.belyak.taskproject.domain.model;
 
 import java.util.UUID;
 
-public record TagSummary(
+public record CategorySummaryWithTaskCount(
         UUID id,
         String name,
-        String color
+        long taskCount
 ) {
 }
