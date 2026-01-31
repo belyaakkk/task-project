@@ -1,26 +1,42 @@
 package com.belyak.taskproject.domain.repository;
 
 import com.belyak.taskproject.domain.model.Team;
+import com.belyak.taskproject.domain.model.TeamStatus;
 import com.belyak.taskproject.domain.model.TeamSummary;
+import com.belyak.taskproject.infrastructure.persistence.projections.TeamDetailsProjection;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface TeamRepository {
-    List<TeamSummary> getAllByMemberId(UUID memberId);
+    // --- WRITE ---
 
     Team save(Team team);
 
-    boolean existsByJoinCode(String joinCode);
+    void deleteByStatusAndDeletedAtBefore(TeamStatus status, Instant deletedAt);
 
-    Optional<Team> findByJoinCode(String joinCode);
-
-    void addMember(UUID teamId, UUID userId);
-
-    boolean isMember(UUID teamId, UUID userId);
+    // --- READ: DOMAIN ---
 
     Optional<Team> findById(UUID teamId);
 
+    Optional<Team> findByJoinCode(String joinCode);
+
+    // --- READ: PROJECTIONS ---
+
+    List<TeamSummary> getAllByMemberId(UUID memberId);
+
+    Optional<TeamDetailsProjection> getTeamDetailsById(UUID teamId);
+
+    // --- CHECKS & VALIDATION ---
+
+    boolean existsByJoinCode(String joinCode);
+
+    boolean isMember(UUID teamId, UUID userId);
+
+    boolean isOwner(UUID teamId, UUID userId);
+
     boolean existsById(UUID teamId);
+
 }

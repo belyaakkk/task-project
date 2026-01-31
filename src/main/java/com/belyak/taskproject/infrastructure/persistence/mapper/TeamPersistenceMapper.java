@@ -23,15 +23,17 @@ public interface TeamPersistenceMapper {
 
     List<TeamSummary> toSummaryList(List<TeamSummaryProjection> teamSummaryProjections);
 
-    TeamEntity toEntity(Team team);
-
-    @Mapping(target = "ownerId", source = "owner.id")
-    @Mapping(target = "memberIds", source = "members", qualifiedByName = "mapMembersToIds")
+    @Mapping(target = "owner", source = "owner.id")
+    @Mapping(target = "members", source = "members", qualifiedByName = "mapMembersToIds")
     Team toDomain(TeamEntity entity);
 
     @Named("mapMembersToIds")
     default Set<UUID> mapMembersToIds(Set<UserEntity> members) {
-        if (members == null) return Collections.emptySet();
-        return members.stream().map(UserEntity::getId).collect(Collectors.toSet());
+        if (members == null || members.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return members.stream()
+                .map(UserEntity::getId)
+                .collect(Collectors.toSet());
     }
 }

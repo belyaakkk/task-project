@@ -33,4 +33,6 @@ public interface SpringDataTagRepository extends JpaRepository<TagEntity, UUID> 
 
     @Query("SELECT t.name FROM TagEntity t WHERE t.team.id = :teamId")
     Set<String> findTagsNameByTeamId(@Param("teamId") UUID teamId);
+
+//    Set<TagEntity> findAllById(Set<UUID> tagIds);
 }

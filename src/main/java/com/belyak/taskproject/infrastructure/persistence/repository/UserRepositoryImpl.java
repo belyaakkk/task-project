@@ -30,7 +30,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findById(UUID userId) {
-        return springDataUserRepository.findById(userId).map(userPersistenceMapper::toDomain);
+        return springDataUserRepository.findById(userId)
+                .map(userPersistenceMapper::toDomain);
     }
 
     @Override

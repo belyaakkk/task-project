@@ -13,6 +13,7 @@ public class Team {
     private String name;
     private String joinCode;
     private String password;
-    private UUID ownerId;
-    private Set<UUID> memberIds;
+    private TeamStatus status;
+    private UUID owner;
+    private Set<UUID> members;
 }

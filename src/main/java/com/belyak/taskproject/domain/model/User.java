@@ -3,16 +3,18 @@ package com.belyak.taskproject.domain.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
 public class User {
     private final UUID id;
-    private final String email;
+    private String email;
     private final String password;
-    private final String name;
+    private String name;
     private Role role;
 }

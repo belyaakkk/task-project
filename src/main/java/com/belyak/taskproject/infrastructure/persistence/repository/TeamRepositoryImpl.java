@@ -1,19 +1,20 @@
 package com.belyak.taskproject.infrastructure.persistence.repository;
 
 import com.belyak.taskproject.domain.model.Team;
+import com.belyak.taskproject.domain.model.TeamStatus;
 import com.belyak.taskproject.domain.model.TeamSummary;
 import com.belyak.taskproject.domain.repository.TeamRepository;
 import com.belyak.taskproject.infrastructure.persistence.entity.TeamEntity;
 import com.belyak.taskproject.infrastructure.persistence.entity.UserEntity;
 import com.belyak.taskproject.infrastructure.persistence.mapper.TeamPersistenceMapper;
+import com.belyak.taskproject.infrastructure.persistence.projections.TeamDetailsProjection;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,22 +27,50 @@ public class TeamRepositoryImpl implements TeamRepository {
     @Override
     public List<TeamSummary> getAllByMemberId(UUID userId) {
         return teamPersistenceMapper.toSummaryList(
-                springDataTeamRepository.findTeamsSummaryByMemberId(userId));
+                springDataTeamRepository.findTeamsSummaryByMemberIdAndStatus(userId, TeamStatus.ACTIVE));
     }
 
     @Override
     public Team save(Team team) {
-        TeamEntity entity = teamPersistenceMapper.toEntity(team);
+        TeamEntity entityToSave;
 
-        UserEntity ownerProxy = springDataUserRepository.getReferenceById(team.getOwnerId());
-        entity.setOwner(ownerProxy);
+        if (team.getId() != null) {
+            // Логика обновления
+            entityToSave = springDataTeamRepository.findById(team.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Team with id '%s' not found".formatted(team.getId())));
 
-        if (entity.getMembers() == null) {
-            entity.setMembers(new HashSet<>());
+            entityToSave.setName(team.getName());
+            entityToSave.setJoinCode(team.getJoinCode());
+            entityToSave.setPassword(team.getPassword());
+            entityToSave.setStatus(team.getStatus());
+        } else {
+            // Логика создания
+            entityToSave = new TeamEntity();
+            entityToSave.setName(team.getName());
+
+            entityToSave.setJoinCode(team.getJoinCode());
+            entityToSave.setPassword(team.getPassword());
+
+            if (team.getStatus() != null) {
+                entityToSave.setStatus(team.getStatus());
+            }
         }
-        entity.getMembers().add(ownerProxy);
 
-        return teamPersistenceMapper.toDomain(springDataTeamRepository.save(entity));
+        UserEntity ownerProxy = springDataUserRepository.getReferenceById(team.getOwner());
+        entityToSave.setOwner(ownerProxy);
+
+        Set<UserEntity> memberProxies = new HashSet<>();
+        if (team.getMembers() != null && !team.getMembers().isEmpty()) {
+            memberProxies = team.getMembers().stream()
+                    .map(springDataUserRepository::getReferenceById)
+                    .collect(Collectors.toSet());
+        }
+
+        entityToSave.setMembers(memberProxies);
+        entityToSave.getMembers().add(ownerProxy);
+
+        TeamEntity savedEntity = springDataTeamRepository.save(entityToSave);
+        return teamPersistenceMapper.toDomain(savedEntity);
     }
 
     @Override
@@ -56,16 +85,13 @@ public class TeamRepositoryImpl implements TeamRepository {
     }
 
     @Override
-    public void addMember(UUID teamId, UUID userId) {
-        if (!springDataTeamRepository.existsById(teamId)) {
-            throw new EntityNotFoundException("Team not found with id: " + teamId);
-        }
-        springDataTeamRepository.addMemberNative(teamId, userId);
+    public boolean isMember(UUID teamId, UUID userId) {
+        return springDataTeamRepository.isMember(teamId, userId);
     }
 
     @Override
-    public boolean isMember(UUID teamId, UUID userId) {
-        return springDataTeamRepository.isMember(teamId, userId);
+    public boolean isOwner(UUID teamId, UUID userId) {
+        return springDataTeamRepository.isOwner(teamId, userId);
     }
 
     @Override
@@ -76,5 +102,15 @@ public class TeamRepositoryImpl implements TeamRepository {
     @Override
     public boolean existsById(UUID teamId) {
         return springDataTeamRepository.existsById(teamId);
+    }
+
+    @Override
+    public void deleteByStatusAndDeletedAtBefore(TeamStatus status, Instant date) {
+        springDataTeamRepository.deleteByStatusAndDeletedAtBefore(status, date);
+    }
+
+    @Override
+    public Optional<TeamDetailsProjection> getTeamDetailsById(UUID teamId) {
+        return springDataTeamRepository.findProjectedById(teamId);
     }
 }

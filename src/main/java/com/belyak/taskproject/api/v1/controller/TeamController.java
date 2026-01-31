@@ -3,10 +3,9 @@ package com.belyak.taskproject.api.v1.controller;
 import com.belyak.taskproject.api.v1.annotation.CurrentUserId;
 import com.belyak.taskproject.api.v1.dto.request.CreateTeamRequest;
 import com.belyak.taskproject.api.v1.dto.request.JoinTeamRequest;
-import com.belyak.taskproject.api.v1.dto.response.CreateTeamResponse;
-import com.belyak.taskproject.api.v1.dto.response.JoinTeamResponse;
-import com.belyak.taskproject.api.v1.dto.response.TeamSummaryResponse;
+import com.belyak.taskproject.api.v1.dto.response.*;
 import com.belyak.taskproject.api.v1.mapper.TeamApiMapper;
+import com.belyak.taskproject.api.v1.mapper.UserApiMapper;
 import com.belyak.taskproject.domain.model.Team;
 import com.belyak.taskproject.domain.model.TeamSummary;
 import com.belyak.taskproject.domain.service.TeamService;
@@ -16,10 +15,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,6 +32,7 @@ public class TeamController {
 
     private final TeamService teamService;
     private final TeamApiMapper teamApiMapper;
+    private final UserApiMapper userApiMapper;
 
     @Operation(
             summary = "Get user's teams",
@@ -65,6 +69,35 @@ public class TeamController {
             @RequestBody @Valid JoinTeamRequest request,
             @CurrentUserId UUID userId) {
         return ResponseEntity.ok(teamService.joinTeam(request, userId));
+    }
+
+    @GetMapping(path = "/{teamId}")
+    @PreAuthorize("@teamSecurity.isMember(#teamId, principal.id)")
+    public ResponseEntity<TeamInfoResponse> getTeamDetails(
+            @PathVariable UUID teamId) {
+        return ResponseEntity.ok(teamService.getTeamDetails(teamId));
+    }
+
+    @GetMapping(path = "/{teamId}/members")
+    @PreAuthorize("@teamSecurity.isMember(#teamId, principal.id)")
+    public ResponseEntity<Set<UserInfoResponse>> getTeamMembers(
+            @PathVariable UUID teamId) {
+        Set<UserInfoResponse> members = teamService.getTeamDetails(teamId).members()
+                .stream()
+                .map(userApiMapper::toInfoResponse)
+                .collect(Collectors.toSet());
+
+        return ResponseEntity.ok(members);
+    }
+
+    @DeleteMapping(path = "/{teamId}/members/{memberId}")
+    @PreAuthorize("@teamSecurity.isOwner(#teamId, principal.id)")
+    public ResponseEntity<Void> kickMember(
+            @PathVariable UUID teamId,
+            @PathVariable UUID memberId,
+            @CurrentUserId UUID initiatorId) throws AccessDeniedException {
+        teamService.kickMember(teamId, memberId, initiatorId);
+        return ResponseEntity.noContent().build();
     }
 }
 

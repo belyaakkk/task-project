@@ -15,4 +15,8 @@ public class TeamSecurity {
     public boolean isMember(UUID teamId, UUID userId) {
         return teamRepository.isMember(teamId, userId);
     }
+
+    public boolean isOwner(UUID teamId, UUID userId) {
+        return teamRepository.isOwner(teamId, userId);
+    }
 }

@@ -17,7 +17,6 @@ public record TaskResponse(
         TaskStatus status,
         TaskPriority priority,
         Instant createdAt,
-        Instant updatedAt,
         Instant dueDate,
         CategoryInfo category,
         Set<TagInfo> tags,

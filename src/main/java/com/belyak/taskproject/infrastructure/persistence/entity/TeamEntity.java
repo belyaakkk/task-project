@@ -1,8 +1,10 @@
 package com.belyak.taskproject.infrastructure.persistence.entity;
 
+import com.belyak.taskproject.domain.model.TeamStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -24,9 +26,16 @@ public class TeamEntity extends BaseEntity {
     private String joinCode;
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private TeamStatus status = TeamStatus.ACTIVE;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private UserEntity owner;
+
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
 
     @Builder.Default
     @ManyToMany
