@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: changeset/01-initial-schema.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changeset/02-indexes-constraints.yaml
+      relativeToChangelogFile: true

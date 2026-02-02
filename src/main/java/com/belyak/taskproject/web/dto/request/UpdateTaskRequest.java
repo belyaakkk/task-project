@@ -31,6 +31,9 @@ public record UpdateTaskRequest(
         @FutureOrPresent(message = "Due date cannot be in the past")
         Instant dueDate,
 
+        @Schema(description = "ID of the assigned user", example = "550e8400-e29b-41d4-a716-446655440000")
+        UUID assigneeId,
+
         @Schema(description = "ID of the category", example = "d94e7731-9706-4074-8854-845722334455")
         UUID categoryId,
 

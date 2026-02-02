@@ -1,0 +1,138 @@
+databaseChangeLog:
+  # --- UNIQUE CONSTRAINTS ---
+
+  - changeSet:
+      id: 08-users-unique-email
+      author: belyak
+      changes:
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: email
+            constraintName: uc_users_email
+
+  - changeSet:
+      id: 09-teams-unique-joincode
+      author: belyak
+      changes:
+        - addUniqueConstraint:
+            tableName: teams
+            columnNames: join_code
+            constraintName: uc_teams_join_code
+
+  - changeSet:
+      id: 10-categories-unique-team-name
+      author: belyak
+      changes:
+        - addUniqueConstraint:
+            tableName: categories
+            columnNames: team_id, name
+            constraintName: uc_categories_team_name
+
+  - changeSet:
+      id: 11-tags-unique-team-name
+      author: belyak
+      changes:
+        - addUniqueConstraint:
+            tableName: tags
+            columnNames: team_id, name
+            constraintName: uc_tags_team_name
+
+  # --- INDEXES (Performance) ---
+
+  - changeSet:
+      id: 12-indexes-for-foreign-keys
+      author: belyak
+      changes:
+        # Teams
+        - createIndex:
+            tableName: teams
+            indexName: idx_teams_owner
+            columns:
+              - column:
+                  name: owner_id
+
+        # Team Members
+        - createIndex:
+            tableName: team_members
+            indexName: idx_team_members_team
+            columns:
+              - column:
+                  name: team_id
+        - createIndex:
+            tableName: team_members
+            indexName: idx_team_members_user
+            columns:
+              - column:
+                  name: user_id
+
+        # Categories
+        - createIndex:
+            tableName: categories
+            indexName: idx_categories_team
+            columns:
+              - column:
+                  name: team_id
+
+        # Tags
+        - createIndex:
+            tableName: tags
+            indexName: idx_tags_team
+            columns:
+              - column:
+                  name: team_id
+
+        # Tasks
+        - createIndex:
+            tableName: tasks
+            indexName: idx_tasks_team
+            columns:
+              - column:
+                  name: team_id
+        - createIndex:
+            tableName: tasks
+            indexName: idx_tasks_assignee
+            columns:
+              - column:
+                  name: assignee_id
+        - createIndex:
+            tableName: tasks
+            indexName: idx_tasks_category
+            columns:
+              - column:
+                  name: category_id
+
+        # Task Tags
+        - createIndex:
+            tableName: task_tags
+            indexName: idx_task_tags_task
+            columns:
+              - column:
+                  name: task_id
+        - createIndex:
+            tableName: task_tags
+            indexName: idx_task_tags_tag
+            columns:
+              - column:
+                  name: tag_id
+
+  # --- CHECK CONSTRAINTS (For Enums) ---
+
+  - changeSet:
+      id: 13-add-enum-check-constraints
+      author: belyak
+      changes:
+        # User Role: CHECK (role IN ('USER', 'ADMIN'))
+        - sql:
+            sql: ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('USER', 'ADMIN'))
+
+        # Team Status: CHECK (status IN ('ACTIVE', 'ARCHIVED', 'DELETED'))
+        - sql:
+            sql: ALTER TABLE teams ADD CONSTRAINT teams_status_check CHECK (status IN ('ACTIVE', 'ARCHIVED', 'DELETED'))
+
+        # Task Status: CHECK (status IN ('DRAFT', 'TODO', 'IN_PROGRESS', 'DONE', 'ARCHIVED'))
+        - sql:
+            sql: ALTER TABLE tasks ADD CONSTRAINT tasks_status_check CHECK (status IN ('DRAFT', 'TODO', 'IN_PROGRESS', 'DONE', 'ARCHIVED'))
+
+        # Task Priority: CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH', 'URGENT'))
+        - sql:
+            sql: ALTER TABLE tasks ADD CONSTRAINT tasks_priority_check CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH', 'URGENT'))

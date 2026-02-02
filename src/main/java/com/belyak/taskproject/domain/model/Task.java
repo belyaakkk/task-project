@@ -29,27 +29,28 @@ public class Task {
     private final Set<UUID> tagIds;
 
     public static Task createNew(UUID teamId, String title, String description,
-                                 TaskPriority priority, Instant dueDate,
+                                 TaskStatus status, TaskPriority priority, Instant dueDate,
                                  UUID categoryId, UUID assigneeId, Set<UUID> tagIds) {
         validateTitle(title);
 
-        return new Task(
-                null,
-                teamId,
-                title.trim(),
-                description != null ? description.trim() : "",
-                TaskStatus.DRAFT,
-                priority != null ? priority : TaskPriority.MEDIUM,
-                dueDate,
-                Instant.now(),
-                assigneeId,
-                categoryId,
-                tagIds != null ? new HashSet<>(tagIds) : new HashSet<>()
-        );
+
+        return Task.builder()
+                .id(null)
+                .teamId(teamId)
+                .title(title.trim())
+                .description(description != null ? description.trim() : "")
+                .status(status != null ? status : TaskStatus.DRAFT)
+                .priority(priority != null ? priority : TaskPriority.MEDIUM)
+                .dueDate(dueDate)
+                .createdAt(Instant.now())
+                .assigneeId(assigneeId)
+                .categoryId(categoryId)
+                .tagIds(tagIds != null ? new HashSet<>(tagIds) : new HashSet<>())
+                .build();
     }
 
     public Task updateDetails(String title, String description, TaskPriority priority,
-                              Instant dueDate, UUID categoryId, Set<UUID> tagIds) {
+                              Instant dueDate, UUID assigneeId, UUID categoryId, Set<UUID> tagIds) {
         validateTitle(title);
 
         return this.toBuilder()
@@ -57,6 +58,7 @@ public class Task {
                 .description(description != null ? description.trim() : "")
                 .priority(priority)
                 .dueDate(dueDate)
+                .assigneeId(assigneeId)
                 .categoryId(categoryId)
                 .tagIds(tagIds != null ? new HashSet<>(tagIds) : new HashSet<>())
                 .build();

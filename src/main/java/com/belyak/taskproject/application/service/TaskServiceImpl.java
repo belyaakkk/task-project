@@ -46,6 +46,7 @@ public class TaskServiceImpl implements TaskService {
                 teamId,
                 request.title(),
                 request.description(),
+                request.status(),
                 request.priority(),
                 request.dueDate(),
                 request.categoryId(),
@@ -66,6 +67,7 @@ public class TaskServiceImpl implements TaskService {
                 request.description(),
                 request.priority(),
                 request.dueDate(),
+                request.assigneeId(),
                 request.categoryId(),
                 request.tagIds()
         );

@@ -14,28 +14,37 @@ import java.util.regex.Pattern;
 public class User {
 
     private final UUID id;
-    private final String email;
     private final String name;
+    private final String email;
     private final String password; // hashed
     private final Role role;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 
     public static User register(String name, String email, String encodedPassword) {
-        validateName(name);
-        validateEmail(email);
+        String safeName = (name != null) ? name.trim() : null;
+        String safeEmail = (email != null) ? email.trim() : null;
 
-        return new User(
-                null,
-                name.trim(),
-                email.toLowerCase().trim(),
-                encodedPassword,
-                Role.USER
-        );
+        validateName(safeName);
+        validateEmail(safeEmail);
+
+        return User.builder()
+                .id(null)
+                .name(safeName)
+                .email(safeEmail.toLowerCase())
+                .password(encodedPassword)
+                .role(Role.USER)
+                .build();
     }
 
     public static User restore(UUID id, String name, String email, String password, Role role) {
-        return new User(id, name, email, password, role);
+        return User.builder()
+                .id(id)
+                .name(name)
+                .email(email)
+                .password(password)
+                .role(role)
+                .build();
     }
 
     public User updateProfile(String newName) {
