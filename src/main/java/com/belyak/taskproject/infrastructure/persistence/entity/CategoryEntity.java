@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "categories", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"teamId", "name"})
+        @UniqueConstraint(columnNames = {"team_id", "name"})
 })
 public class CategoryEntity extends BaseEntity {
 
@@ -27,7 +27,7 @@ public class CategoryEntity extends BaseEntity {
 
     @Builder.Default
     @Column(name = "is_system", nullable = false)
-    private boolean isSystem = true;
+    private boolean isSystem = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = false)

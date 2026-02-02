@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -31,8 +32,9 @@ public interface SpringDataTagRepository extends JpaRepository<TagEntity, UUID> 
            "WHERE t.id = :tagId and member.id = :userId")
     boolean canAccess(@Param("tagId") UUID tagId, @Param("userId") UUID userId);
 
-    @Query("SELECT t.name FROM TagEntity t WHERE t.team.id = :teamId")
-    Set<String> findTagsNameByTeamId(@Param("teamId") UUID teamId);
-
-//    Set<TagEntity> findAllById(Set<UUID> tagIds);
+    @Query("SELECT t.name FROM TagEntity t " +
+           "WHERE t.team.id = :teamId " +
+           "AND LOWER(t.name) IN :names")
+    Set<String> findNamesByTeamIdAndNamesIn(@Param("teamId") UUID teamId,
+                                            @Param("names") Collection<String> names);
 }

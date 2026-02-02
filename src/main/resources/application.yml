@@ -1,6 +1,13 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+
 spring:
   application:
-    name: task-project
+    name: task-manager-api
 
   datasource:
     url: jdbc:postgresql://localhost:${DB_PORT:5444}/taskprojectdb
@@ -9,18 +16,30 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    open-in-view: false
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
-    show-sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
   jackson:
     mapper:
-          accept-case-insensitive-enums: true
+      accept-case-insensitive-enums: true
+
+app:
+  scheduling:
+    team-cleanup-cron: "0 0 3 * * *"
 
 application:
   security:
     jwt:
       secret-key: ${JWT_SECRET}
       expiration: ${JWT_EXPIRATION:86400000}
+
+logging:
+  level:
+    root: info
+    com.belyak.taskproject: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

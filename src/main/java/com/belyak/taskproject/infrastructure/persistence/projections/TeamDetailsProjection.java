@@ -7,12 +7,9 @@ import java.util.UUID;
 
 public interface TeamDetailsProjection {
     UUID getId();
-
     String getName();
-
     TeamStatus getStatus();
-
     UserInfoProjection getOwner();
-
     Set<UserInfoProjection> getMembers();
 }
+

@@ -1,6 +1,6 @@
 package com.belyak.taskproject.infrastructure.config;
 
-import com.belyak.taskproject.infrastructure.web.resolver.CurrentUserIdArgumentResolver;
+import com.belyak.taskproject.web.resolver.CurrentUserIdArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

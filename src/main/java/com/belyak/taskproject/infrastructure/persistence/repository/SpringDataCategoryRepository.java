@@ -31,7 +31,4 @@ public interface SpringDataCategoryRepository extends JpaRepository<CategoryEnti
     boolean canAccess(@Param("categoryId") UUID categoryId, @Param("userId") UUID userId);
 
     boolean existsByTeamIdAndNameIgnoreCase(UUID teamId, String name);
-
-    @Override
-    CategoryEntity getReferenceById(UUID id);
 }

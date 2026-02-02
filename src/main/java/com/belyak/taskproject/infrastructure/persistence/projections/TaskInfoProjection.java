@@ -9,24 +9,14 @@ import java.util.UUID;
 
 public interface TaskInfoProjection {
     UUID getId();
-
     String getTitle();
-
     String getDescription();
-
     TaskStatus getStatus();
-
     TaskPriority getPriority();
-
     Instant getCreatedAt();
-
     Instant getUpdatedAt();
-
     Instant getDueDate();
-
     CategoryInfoProjection getCategory();
-
     Set<TagInfoProjection> getTags();
-
     UserInfoProjection getAssignee();
 }

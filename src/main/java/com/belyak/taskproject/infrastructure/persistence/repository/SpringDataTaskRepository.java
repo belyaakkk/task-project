@@ -18,7 +18,7 @@ public interface SpringDataTaskRepository extends JpaRepository<TaskEntity, UUID
 
     @EntityGraph(attributePaths = {"category", "tags", "assignee"})
     @Query("SELECT t " +
-           "FROM TaskEntity  t " +
+           "FROM TaskEntity t " +
            "WHERE t.team.id = :teamId AND t.status = :status")
     List<TaskInfoProjection> findAllByTeamIdAndStatus(
             @Param("teamId") UUID teamId,

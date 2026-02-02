@@ -6,7 +6,6 @@ import com.belyak.taskproject.infrastructure.persistence.projections.TeamDetails
 import com.belyak.taskproject.infrastructure.persistence.projections.TeamSummaryProjection;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -26,28 +25,26 @@ public interface SpringDataTeamRepository extends JpaRepository<TeamEntity, UUID
            "FROM TeamEntity t " +
            "JOIN t.members m " +
            "WHERE m.id = :memberId AND t.status = :status")
-    List<TeamSummaryProjection> findTeamsSummaryByMemberIdAndStatus(UUID memberId, TeamStatus status);
+    List<TeamSummaryProjection> findTeamsSummaryByMemberIdAndStatus(
+            @Param("memberId") UUID memberId,
+            @Param("status") TeamStatus status);
 
     boolean existsByJoinCode(String joinCode);
 
     Optional<TeamEntity> findByJoinCode(String joinCode);
 
-    @Modifying
-    @Query(value = "INSERT INTO team_members (team_id, user_id) VALUES (:teamId, :userId)", nativeQuery = true)
-    void addMemberNative(@Param("teamId") UUID teamId, @Param("userId") UUID userId);
-
     @Query("SELECT COUNT(t) > 0 " +
            "FROM TeamEntity t " +
            "JOIN t.members m " +
            "WHERE t.id = :teamId AND m.id = :userId")
-    boolean isMember(UUID teamId, UUID userId);
+    boolean isMember(@Param("teamId") UUID teamId, @Param("userId") UUID userId);
 
     @Query("SELECT COUNT(t) > 0 " +
            "FROM TeamEntity t " +
            "WHERE t.id = :teamId AND t.owner.id = :userId")
     boolean isOwner(@Param("teamId") UUID teamId, @Param("userId") UUID userId);
 
-    void deleteByStatusAndDeletedAtBefore(TeamStatus status, Instant deletedAt);
+    int deleteByStatusAndDeletedAtBefore(TeamStatus status, Instant deletedAt);
 
     @EntityGraph(attributePaths = {"owner", "members"})
     Optional<TeamDetailsProjection> findProjectedById(UUID id);

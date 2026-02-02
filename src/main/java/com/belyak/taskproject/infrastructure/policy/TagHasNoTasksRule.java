@@ -2,7 +2,8 @@ package com.belyak.taskproject.infrastructure.policy;
 
 import com.belyak.taskproject.domain.exception.TagDeletionException;
 import com.belyak.taskproject.domain.model.Tag;
-import com.belyak.taskproject.domain.repository.TaskRepository;
+import com.belyak.taskproject.domain.policy.TagDeletionRule;
+import com.belyak.taskproject.domain.port.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
