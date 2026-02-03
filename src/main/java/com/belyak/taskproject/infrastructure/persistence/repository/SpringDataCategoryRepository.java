@@ -26,8 +26,8 @@ public interface SpringDataCategoryRepository extends JpaRepository<CategoryEnti
     @Query("SELECT COUNT(c) > 0 " +
            "FROM CategoryEntity c " +
            "JOIN c.team team " +
-           "JOIN team.members member " +
-           "WHERE c.id = :categoryId and member.id = :userId")
+           "LEFT JOIN team.members member " +
+           "WHERE c.id = :categoryId AND (team.owner.id = :userId OR member.id = :userId)")
     boolean canAccess(@Param("categoryId") UUID categoryId, @Param("userId") UUID userId);
 
     boolean existsByTeamIdAndNameIgnoreCase(UUID teamId, String name);

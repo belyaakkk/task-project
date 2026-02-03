@@ -13,7 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -59,7 +60,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public Task updateTask(UUID teamId, UUID taskId, UpdateTaskRequest request) throws AccessDeniedException {
+    public Task updateTask(UUID teamId, UUID taskId, UpdateTaskRequest request) {
         Task task = getTaskOrThrow(teamId, taskId);
 
         Task updatedTask = task.updateDetails(
@@ -77,7 +78,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void updateStatus(UUID teamId, UUID taskId, TaskStatus newStatus) throws AccessDeniedException {
+    public void updateStatus(UUID teamId, UUID taskId, TaskStatus newStatus) {
         Task task = getTaskOrThrow(teamId, taskId);
         Task updatedTask = task.changeStatus(newStatus);
         taskRepository.save(updatedTask);
@@ -85,7 +86,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void assignTask(UUID teamId, UUID taskId, UUID assigneeId) throws AccessDeniedException {
+    public void assignTask(UUID teamId, UUID taskId, UUID assigneeId) {
         Task task = getTaskOrThrow(teamId, taskId);
         if (assigneeId != null) {
             validateAssignee(teamId, assigneeId);
@@ -105,7 +106,7 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.deleteById(taskId);
     }
 
-    private Task getTaskOrThrow(UUID teamId, UUID taskId) throws AccessDeniedException {
+    private Task getTaskOrThrow(UUID teamId, UUID taskId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException("Task with id '%s' not found".formatted(taskId)));
 

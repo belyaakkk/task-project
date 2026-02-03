@@ -12,6 +12,14 @@ public class CodeGeneratorUtils {
 
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+    /**
+     * Generates a random alphanumeric string of the specified length.
+     * <p>
+     * The generated string contains only uppercase letters (A-Z) and digits (0-9).
+     *
+     * @param length the desired length of the string
+     * @return a random alphanumeric string
+     */
     public static String generateJoinCode(int length) {
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
